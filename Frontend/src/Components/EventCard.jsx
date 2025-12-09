@@ -9,39 +9,35 @@ const EventCard = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch events from LocalStorage (simulating "All Users" public feed)
-        const loadEvents = () => {
+        // Fetch events from the backend API instead of LocalStorage
+        const loadEvents = async () => {
             try {
-                const storedEvents = JSON.parse(localStorage.getItem('events') || '[]');
-                
-                // Filter for "Currently Going" or Upcoming events
-                // Shows events that haven't ended yet (or started today/future if no end date)
-                const now = new Date();
-                now.setHours(0, 0, 0, 0); // Compare dates without time for broader inclusion
-
-                const activeEvents = storedEvents.filter(event => {
-                    if (!event.startDate) return false;
-                    const eventEnd = event.endDate ? new Date(event.endDate) : new Date(event.startDate);
-                    return eventEnd >= now;
-                });
-
-                setData(activeEvents);
+                const response = await fetch("http://localhost:7120/event/getEvent");
+                if (response.ok) {
+                    const events = await response.json();
+                    setData(events);
+                } else {
+                    throw new Error('Failed to fetch events');
+                }
             } catch (error) {
                 console.error("Error loading events:", error);
                 setData([]);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to load events. Please try again later.',
+                    icon: 'error',
+                    background: '#1f2937',
+                    color: '#fff'
+                });
             } finally {
                 setIsLoading(false);
             }
         };
 
         loadEvents();
-        
-        // Listen for storage changes (in case added from another tab)
-        window.addEventListener('storage', loadEvents);
-        return () => window.removeEventListener('storage', loadEvents);
     }, []);
 
-    const handleDeleteEvent = (eventName) => {
+    const handleDeleteEvent = async (eventName) => {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -52,22 +48,26 @@ const EventCard = () => {
             confirmButtonText: 'Yes, delete it!',
             background: '#1f2937',
             color: '#fff'
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const storedEvents = JSON.parse(localStorage.getItem('events') || '[]');
-                    const updatedEvents = storedEvents.filter(event => event.eventName !== eventName);
-                    localStorage.setItem('events', JSON.stringify(updatedEvents));
-                    
-                    setData(data.filter(event => event.eventName !== eventName));
-                    
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'Your event has been deleted.',
-                        icon: 'success',
-                        background: '#1f2937',
-                        color: '#fff'
+                    const response = await fetch(`http://localhost:7120/event/deleteEvent/${eventName}`, {
+                        method: 'DELETE'
                     });
+                    
+                    if (response.ok) {
+                        setData(data.filter(event => event.eventName !== eventName));
+                        
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'Your event has been deleted.',
+                            icon: 'success',
+                            background: '#1f2937',
+                            color: '#fff'
+                        });
+                    } else {
+                        throw new Error('Failed to delete event');
+                    }
                 } catch (err) {
                     console.error("Error deleting event:", err);
                     Swal.fire({

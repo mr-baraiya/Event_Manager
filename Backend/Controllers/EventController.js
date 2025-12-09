@@ -56,9 +56,16 @@ const updateEvent = async (req, res) => {
             return res.status(404).send('No Event found with that Name');
         }
 
-        const upEvent = await Event.updateOne({ eventName: req.params.eventName }, { $set: req.body });
-        res.status(200).json({ message: "Event Updated Successfully", upEvent });
+        // Use findByIdAndUpdate for better update handling
+        const upEvent = await Event.findOneAndUpdate(
+            { eventName: req.params.eventName }, 
+            { $set: req.body },
+            { new: true } // Return the updated document
+        );
+        
+        res.status(200).json({ message: "Event Updated Successfully", event: upEvent });
     } catch (error) {
+        console.error("Error updating event:", error);
         res.status(500).send("Internal Server Error");
     }
 };
@@ -71,8 +78,9 @@ const deleteEvent = async (req, res) => {
             return res.status(404).send('No Event found with that Name');
         }
 
-        res.status(200).json({ message: "Event Deleted Successfully", findEvent });
+        res.status(200).json({ message: "Event Deleted Successfully", event: findEvent });
     } catch (error) {
+        console.error("Error deleting event:", error);
         res.status(500).send("Internal Server Error");
     }
 };

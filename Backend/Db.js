@@ -6,13 +6,20 @@ const SignUp = require('./Routes/Signup');
 const Event = require('./Routes/Event')
 const cors = require('cors');
 
-
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
 
-const PORT = process.env.MONGO_PORT;
+// Configure CORS to allow requests from the frontend
+const corsOptions = {
+  origin: "http://localhost:5173", // Vite's default port
+  methods: ["GET", "POST", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type"]
+};
+
+app.use(cors(corsOptions));
+
+const PORT = process.env.MONGO_PORT || 7120; // Fallback to 7120 if not set
 
 app.use(express.urlencoded({ extended: true }));
 app.use(BodyParser.json());
