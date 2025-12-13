@@ -1142,10 +1142,10 @@ SOFTWARE.
 
 ### Project Maintainers
 
-**Lead Developer**: Your Name
+**Lead Developer**: Deven Machchhar
 - GitHub: [@Deven14125](https://github.com/Deven14125)
 - Email: deven81281256@gmail.com
-- LinkedIn: [(https://www.linkedin.com/in/deven-machchhar-b13287286/)]((https://www.linkedin.com/in/deven-machchhar-b13287286/))
+- LinkedIn: [Deven Machchhar]((https://www.linkedin.com/in/deven-machchhar-b13287286/))
 
 ### Project Links
 
