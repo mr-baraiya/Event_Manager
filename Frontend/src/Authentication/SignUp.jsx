@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "../Services/api.js";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import {
@@ -115,7 +116,7 @@ const SignUp = () => {
         setIsLoading(true);
 
         try {
-            let res = await fetch("http://localhost:7120/user/Signup", {
+            let res = await fetch(api.url("/user/Signup"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

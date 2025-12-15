@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "../Services/api.js";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import {
@@ -110,7 +111,7 @@ const Login = () => {
         setIsLoading(true);
 
         try {
-            let res = await fetch("http://localhost:7120/user/Login", {
+            let res = await fetch(api.url("/user/Login"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
